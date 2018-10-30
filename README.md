@@ -1,6 +1,6 @@
 # add_2_calendar
 
-A really simple Flutter plugin to add events to each platform&#x27;s default calendar.
+A really simple Flutter plugin to add events to each platform's default calendar.
 
 ## Installation
 
@@ -8,7 +8,7 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  add_2_calendar: ^0.0.1
+  add_2_calendar: ^1.0.0
 ```
 
 ## Use it

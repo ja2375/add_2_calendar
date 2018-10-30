@@ -6,6 +6,7 @@ import 'package:add_2_calendar/add_2_calendar.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   @override
   Widget build(BuildContext context) {
     Event event = Event(
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       home: Scaffold(
+        key: scaffoldState,
         appBar: AppBar(
           title: const Text('Add event to calendar example'),
         ),
@@ -25,7 +27,9 @@ class MyApp extends StatelessWidget {
           child: RaisedButton(
             child: Text('Add test event to device calendar'),
             onPressed: () {
-              Add2Calendar.addEvent2Cal(event);
+              Add2Calendar.addEvent2Cal(event).then((success) {
+                scaffoldState.currentState.showSnackBar(SnackBar(content: Text(success ? 'Success' : 'Error')));
+              });
             },
           ),
         ),
