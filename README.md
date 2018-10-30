@@ -2,9 +2,33 @@
 
 A really simple Flutter plugin to add events to each platform&#x27;s default calendar.
 
-## Getting Started
+## Installation
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+In your `pubspec.yaml` file within your Flutter Project: 
 
-For help on editing plugin code, view the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
+```yaml
+dependencies:
+  add_2_calendar: ^0.0.1
+```
+
+## Use it
+
+```dart
+import 'package:add_2_calendar/add_2_calendar.dart';
+
+final Event event = Event(
+      title: 'Event title',
+      description: 'Event description',
+      location: 'Event location',
+      startDate: DateTime(/* Some date here */),
+      endDate: DateTime(/* Some date here */),
+    );
+...
+Add2Calendar.addEvent2Cal(event);
+...
+```
+
+## Example
+
+Please run the app in the `example/` folder to start playing!
+
