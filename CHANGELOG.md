@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Events are no longer marked as "all day" on Android
+
 ## 1.0.0
 
 * First stable release

@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
       title: 'Test event',
       description: 'example',
       location: 'Flutter app',
-      startDate: DateTime(2018, 10, 29),
-      endDate: DateTime(2018, 10, 30),
+      startDate: DateTime(2018, 10, 29, 16, 49),
+      endDate: DateTime(2018, 10, 30, 17, 01),
     );
 
     return MaterialApp(
