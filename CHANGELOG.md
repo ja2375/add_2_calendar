@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Added necessary entitlements for iOS 10+ integration
+
 ## 1.0.1
 
 * Events are no longer marked as "all day" on Android

@@ -8,7 +8,16 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  add_2_calendar: ^1.0.1
+  add_2_calendar: ^1.0.2
+```
+
+### iOS integration
+
+In order to make this plugin work on iOS 10+, be sure to add this to your `info.plist` file:
+
+```xml
+<key>NSCalendarsUsageDescription</key>
+<string>INSERT_REASON_HERE</string>
 ```
 
 ## Use it
