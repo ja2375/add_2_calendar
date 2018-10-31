@@ -8,7 +8,7 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  add_2_calendar: ^1.0.0
+  add_2_calendar: ^1.0.1
 ```
 
 ## Use it

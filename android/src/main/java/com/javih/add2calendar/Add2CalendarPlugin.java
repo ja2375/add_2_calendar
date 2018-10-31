@@ -49,7 +49,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
         context.startActivity(intent);
     }
 
