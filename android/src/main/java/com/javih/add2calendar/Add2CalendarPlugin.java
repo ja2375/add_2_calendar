@@ -30,7 +30,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("add2Cal")) {
             try {
-                insert((String) call.argument("title"), (String) call.argument("desc"), (String) call.argument("location"), (long) call.argument("startDate"), (long) call.argument("endDate"));
+                insert((String) call.argument("title"), (String) call.argument("desc"), (String) call.argument("location"), (long) call.argument("startDate"), (long) call.argument("endDate"), (boolean) call.argument("allDay"));
                 result.success(true);
             } catch (NullPointerException e) {
                 result.error("Exception ocurred in Android code", e.getMessage(), false);
@@ -41,7 +41,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     }
 
     @SuppressLint("NewApi")
-    public void insert(String title, String desc, String loc, long start, long end) {
+    public void insert(String title, String desc, String loc, long start, long end, boolean allDay) {
         Context context = getActiveContext();
         Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
         intent.putExtra(CalendarContract.Events.TITLE, title);
@@ -49,7 +49,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
         context.startActivity(intent);
     }
 
