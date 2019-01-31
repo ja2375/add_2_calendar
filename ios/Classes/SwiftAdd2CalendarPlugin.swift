@@ -21,17 +21,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-            case "add2Cal":
-                let args = call.arguments as! [String:Any]
-                let title = args["title"] as! String
-                let desc = args["desc"] as! String
-                addEventToCalendar(title: title, description: desc, startDate: Date(milliseconds: (args["startDate"] as! Int)), endDate: Date(milliseconds: (args["endDate"] as! Int)))
-                result(true)
-            default:
-                result(FlutterMethodNotImplemented)
-            }
-    }
+
   }
 
   private func addEventToCalendar(title: String!, description: String, startDate: Date, endDate: Date, completion: ((_ success: Bool, _ error: NSError?) -> Void)? = nil) {
@@ -56,4 +46,5 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
               completion?(false, error as NSError?)
           }
       })
+  }
 }
