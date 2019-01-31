@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Fixed iOS returning always success (issue #5)
+
 ## 1.0.2
 
 * Added necessary entitlements for iOS 10+ integration
