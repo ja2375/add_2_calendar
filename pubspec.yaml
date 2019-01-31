@@ -1,6 +1,6 @@
 name: add_2_calendar
 description: A really simple Flutter plugin to add events to each platform's default calendar.
-version: 1.0.2
+version: 1.0.3
 author: Javi Hurtado <webmaster@javi-h.com>
 homepage: https://github.com/ja2375/add_2_calendar
 
