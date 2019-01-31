@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Added allDay boolean
+* Fixed bugs
+
 ## 1.0.3
 
 * Fixed iOS returning always success (issue #5)
