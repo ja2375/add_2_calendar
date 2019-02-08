@@ -25,8 +25,9 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         let args = call.arguments as! [String:Any]
         let title = args["title"] as! String
         let desc = args["desc"] as! String
+        let location = args["location"] as! String
 
-        addEventToCalendar(title: title, description: desc, startDate: Date(milliseconds: (args["startDate"] as! Int)), endDate: Date(milliseconds: (args["endDate"] as! Int)), allDay: args["allDay"] as! Bool, completion: { (success) -> Void in
+        addEventToCalendar(title: title, description: desc, location: location, startDate: Date(milliseconds: (args["startDate"] as! Int)), endDate: Date(milliseconds: (args["endDate"] as! Int)), allDay: args["allDay"] as! Bool, completion: { (success) -> Void in
             if success {
                 result(true)
             } else {
@@ -36,7 +37,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  private func addEventToCalendar(title: String!, description: String, startDate: Date, endDate: Date, allDay: Bool, completion: ((_ success: Bool) -> Void)? = nil) {
+    private func addEventToCalendar(title: String!, description: String, location: String, startDate: Date, endDate: Date, allDay: Bool, completion: ((_ success: Bool) -> Void)? = nil) {
           let eventStore = EKEventStore()
 
           eventStore.requestAccess(to: .event, completion: { (granted, error) in
@@ -45,6 +46,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
                   event.title = title
                   event.startDate = startDate
                   event.endDate = endDate
+                  event.location = location
                   event.notes = description
                   event.isAllDay = allDay
                   event.calendar = eventStore.defaultCalendarForNewEvents
