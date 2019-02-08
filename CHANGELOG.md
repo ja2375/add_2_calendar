@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Added location support for iOS thanks to [@gopchi](https://github.com/gopchi)
+
 ## 1.1.0
 
 * Added allDay boolean
