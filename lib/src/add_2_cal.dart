@@ -5,10 +5,11 @@ import 'package:flutter/services.dart';
 
 class Add2Calendar {
   static const MethodChannel _channel =
-  const MethodChannel('flutter.javih.com/add_2_calendar');
+      const MethodChannel('flutter.javih.com/add_2_calendar');
 
   static Future<bool> addEvent2Cal(Event event) async {
-    final bool isAdded = await _channel.invokeMethod('add2Cal', <String, dynamic>{
+    final bool isAdded =
+        await _channel.invokeMethod('add2Cal', <String, dynamic>{
       'title': event.title,
       'desc': event.description,
       'location': event.location,

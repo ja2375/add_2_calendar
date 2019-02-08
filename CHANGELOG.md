@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Format code
+
 ## 1.2.0
 
 * Added location support for iOS thanks to [@gopchi](https://github.com/gopchi)

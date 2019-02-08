@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
             child: Text('Add test event to device calendar'),
             onPressed: () {
               Add2Calendar.addEvent2Cal(event).then((success) {
-                scaffoldState.currentState.showSnackBar(SnackBar(content: Text(success ? 'Success' : 'Error')));
+                scaffoldState.currentState.showSnackBar(
+                    SnackBar(content: Text(success ? 'Success' : 'Error')));
               });
             },
           ),
