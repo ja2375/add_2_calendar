@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'package:add_2_calendar/add_2_calendar.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   @override
   Widget build(BuildContext context) {
     Event event = Event(

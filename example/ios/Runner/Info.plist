@@ -42,6 +42,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSCalendarsUsageDescription</key>
-    <string>Create events</string>
+	<string>Create events</string>
 </dict>
 </plist>

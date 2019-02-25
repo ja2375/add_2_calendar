@@ -4,9 +4,9 @@
 Pod::Spec.new do |s|
   s.name             = 'add_2_calendar'
   s.version          = '0.0.1'
-  s.summary          = 'A really simple Flutter plugin to add events to each platform&#x27;s default calendar.'
+  s.summary          = 'A new Flutter plugin.'
   s.description      = <<-DESC
-A really simple Flutter plugin to add events to each platform&#x27;s default calendar.
+A new Flutter plugin.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
