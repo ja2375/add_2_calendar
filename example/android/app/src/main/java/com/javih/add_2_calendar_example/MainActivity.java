@@ -1,4 +1,4 @@
-package com.javih.add2calendarexample;
+package com.javih.add_2_calendar_example;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

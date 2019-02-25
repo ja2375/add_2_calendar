@@ -1,4 +1,4 @@
-group 'com.javih.add2calendar'
+group 'com.javih.add_2_calendar'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
