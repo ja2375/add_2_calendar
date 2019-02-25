@@ -1,3 +1,8 @@
+## 1.2.2
+
+* Full project refactor
+* Add some comments
+
 ## 1.2.1
 
 * Format code
