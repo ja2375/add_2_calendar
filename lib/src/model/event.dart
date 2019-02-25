@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+/// Class that holds eache event's info.
 class Event {
   String title, description, location;
   DateTime startDate, endDate;
