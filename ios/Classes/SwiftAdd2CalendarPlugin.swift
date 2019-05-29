@@ -4,11 +4,7 @@ import EventKit
 import Foundation
 
 extension Date {
-      var millisecondsSince1970:Int {
-          return Int((self.timeIntervalSince1970 * 1000.0).rounded())
-      }
-
-      init(milliseconds:Int!) {
+      init(milliseconds:Double) {
           self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
       }
 }
@@ -26,8 +22,8 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         let title = args["title"] as! String
         let desc = args["desc"] as! String
         let location = args["location"] as! String
-
-        addEventToCalendar(title: title, description: desc, location: location, startDate: Date(milliseconds: (args["startDate"] as! Int)), endDate: Date(milliseconds: (args["endDate"] as! Int)), allDay: args["allDay"] as! Bool, completion: { (success) -> Void in
+        
+        addEventToCalendar(title: title, description: desc, location: location, startDate: Date(milliseconds: (args["startDate"] as! Double)), endDate: Date(milliseconds: (args["endDate"] as! Double)), allDay: args["allDay"] as! Bool, completion: { (success) -> Void in
             if success {
                 result(true)
             } else {
