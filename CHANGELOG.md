@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Fixed 32bit system conversion on iOS (issue #13)
+
 ## 1.2.2
 
 * Full project refactor
