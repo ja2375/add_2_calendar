@@ -37,6 +37,8 @@ Add2Calendar.addEvent2Cal(event);
 ...
 ```
 
+Note: See [DateTime docs](https://api.flutter.dev/flutter/dart-core/DateTime-class.html) to know what valid date could be correct in above piece of code.
+
 ## Example
 
 Please run the app in the `example/` folder to start playing!
