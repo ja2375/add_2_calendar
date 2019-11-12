@@ -1,3 +1,10 @@
+## 1.3.1
+
+* Set project Swift version (#25)
+* Manage calendar events with EventKitUI (#24)
+* Add DateTime class docs link (#23)
+* Fix issue #4: add_2_calendar/add_2_calendar-Swift.h' file not found (#22)
+
 ## 1.3.0
 
 * Fixed 32bit system conversion on iOS (issue #13)
