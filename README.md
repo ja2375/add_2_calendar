@@ -18,6 +18,8 @@ In order to make this plugin work on iOS 10+, be sure to add this to your `info.
 ```xml
 <key>NSCalendarsUsageDescription</key>
 <string>INSERT_REASON_HERE</string>
+<key>NSContactsUsageDescription</key>
+<string>INSERT_REASON_HERE</string>
 ```
 
 ## Use it
