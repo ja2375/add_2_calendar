@@ -10,6 +10,8 @@ extension Date {
       }
 }
 
+var statusBarStyle = UIApplication.shared.statusBarStyle
+
 public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -113,6 +115,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         
         if let root = UIApplication.shared.keyWindow?.rootViewController {
             root.present(eventModalVC, animated: true, completion: {
+                statusBarStyle = UIApplication.shared.statusBarStyle
                 UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
             })
         }
@@ -123,7 +126,7 @@ extension SwiftAdd2CalendarPlugin: EKEventEditViewDelegate {
     
     public func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
         controller.dismiss(animated: true, completion: {
-            UIApplication.shared.statusBarStyle = UIStatusBarStyle.lightContent
+            UIApplication.shared.statusBarStyle = statusBarStyle
         })
     }
 }
