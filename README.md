@@ -8,7 +8,7 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  add_2_calendar: ^1.3.1
+  add_2_calendar: ^1.4.0
 ```
 
 ### iOS integration

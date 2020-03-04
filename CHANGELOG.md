@@ -1,3 +1,8 @@
+## 1.4.0
+
+* Add timezone support (thanks to @palmsnipe)
+* Fix status bar style bug on iOS (thanks to @Kiruel)
+
 ## 1.3.1
 
 * Set project Swift version (#25)
