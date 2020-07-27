@@ -52,7 +52,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
             if (granted) && (error == nil) {
                 let event = EKEvent(eventStore: eventStore)
-                let alarm = EKAlarm(relativeOffset: alarmInterval)
+                let alarm = EKAlarm(relativeOffset: alarmInterval*(-1))
                 event.alarms = [alarm]
                 event.title = title
                 event.startDate = startDate
