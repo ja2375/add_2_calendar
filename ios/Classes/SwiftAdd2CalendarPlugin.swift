@@ -34,6 +34,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
                              startDate: Date(milliseconds: (args["startDate"] as! Double)),
                              endDate: Date(milliseconds: (args["endDate"] as! Double)),
                              timeZone: timeZone,
+                             alarmInterval: args["alarmInterval"] as! Double,
                              allDay: args["allDay"] as! Bool,
                              completion: { (success) -> Void in
               if success {
@@ -45,12 +46,14 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
       }
     }
 
-    private func addEventToCalendar(title: String!, description: String, location: String, startDate: Date, endDate: Date, timeZone: TimeZone?, allDay: Bool, completion: ((_ success: Bool) -> Void)? = nil) {
+    private func addEventToCalendar(title: String!, description: String, location: String, startDate: Date, endDate: Date, timeZone: TimeZone?, alarmInterval: Double, allDay: Bool, completion: ((_ success: Bool) -> Void)? = nil) {
         let eventStore = EKEventStore()
         
         eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
             if (granted) && (error == nil) {
                 let event = EKEvent(eventStore: eventStore)
+                let alarm = EKAlarm(relativeOffset: alarmInterval)
+                event.alarms = [alarm]
                 event.title = title
                 event.startDate = startDate
                 event.endDate = endDate
