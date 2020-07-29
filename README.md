@@ -32,6 +32,7 @@ final Event event = Event(
       description: 'Event description',
       location: 'Event location',
       startDate: DateTime(/* Some date here */),
+      alarmInterval: Duration(/* Ex. days:1 */), // on iOS, you can set alarm notification after your event.
       endDate: DateTime(/* Some date here */),
     );
 ...
