@@ -41,6 +41,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        channel.setMethodCallHandler(null);
         channel = null;
     }
 
@@ -61,6 +62,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
 
     @Override
     public void onDetachedFromActivity() {
+        activity = null;
     }
 
     private void setupMethodChannel(BinaryMessenger messenger) {
