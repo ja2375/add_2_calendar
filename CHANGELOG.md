@@ -1,3 +1,7 @@
+## 1.5.0
+
+* Migrate to null safety (thanks to @nilsreichardt)
+
 ## 1.4.0
 
 * Add timezone support (thanks to @palmsnipe)
