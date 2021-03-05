@@ -6,14 +6,14 @@ class Event {
   DateTime startDate, endDate;
   bool allDay;
   //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
-  Duration alarmInterval; 
+  Duration? alarmInterval; 
 
   Event(
-      {@required this.title,
+      {required this.title,
       this.description = '',
       this.location = '',
-      @required this.startDate,
-      @required this.endDate,
+      required this.startDate,
+      required this.endDate,
       this.alarmInterval,
       this.timeZone = '',
       this.allDay = false});

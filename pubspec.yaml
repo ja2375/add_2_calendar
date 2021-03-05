@@ -4,7 +4,7 @@ version: 1.4.0
 homepage: https://github.com/ja2375/add_2_calendar
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.10.0 <2.0.0"
 
 dependencies:
