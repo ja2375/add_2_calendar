@@ -1,4 +1,4 @@
-## 1.5.0
+## 2.0.0
 
 * Migrate to null safety (thanks to @nilsreichardt)
 
