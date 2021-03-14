@@ -1,6 +1,7 @@
 ## 2.0.0
 
 * Migrate to null safety (thanks to @nilsreichardt)
+* Add compatibility with embedding v2 (thanks to @javadi69)
 
 ## 1.4.0
 
