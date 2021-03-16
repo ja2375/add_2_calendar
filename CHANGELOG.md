@@ -1,3 +1,6 @@
+## 2.0.1
+* Updated Android gradle and migrated example to v2. Fixes deprecated api message
+
 ## 2.0.0
 
 * Migrate to null safety (thanks to @nilsreichardt)

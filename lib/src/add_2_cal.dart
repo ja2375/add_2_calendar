@@ -17,7 +17,7 @@ class Add2Calendar {
       'startDate': event.startDate.millisecondsSinceEpoch,
       'endDate': event.endDate.millisecondsSinceEpoch,
       'timeZone': event.timeZone,
-      'alarmInterval': event.alarmInterval?.inSeconds?.toDouble(),
+      'alarmInterval': event.alarmInterval?.inSeconds.toDouble(),
       'allDay': event.allDay,
     });
     return isAdded;
