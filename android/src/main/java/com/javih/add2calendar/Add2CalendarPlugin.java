@@ -1,6 +1,5 @@
 package com.javih.add2calendar;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -34,9 +33,9 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        context = binding.getApplicationContext();
-        setupMethodChannel(binding.getBinaryMessenger());
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        context = flutterPluginBinding.getApplicationContext();
+        setupMethodChannel(flutterPluginBinding.getBinaryMessenger());
     }
 
     @Override
@@ -84,7 +83,6 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         }
     }
 
-    @SuppressLint("NewApi")
     private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay) {
         Context mContext = activity != null ? activity : context;
         Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
