@@ -8,9 +8,11 @@ class Add2Calendar {
       const MethodChannel('flutter.javih.com/add_2_calendar');
 
   /// Add an Event (object) to user's default calendar.
-  static Future<bool?> addEvent2Cal(Event event) async {
-    final bool? isAdded =
-        await _channel.invokeMethod('add2Cal', <String, dynamic>{
+  static Future<bool> addEvent2Cal(
+    Event event, {
+    bool androidNoUI = false,
+  }) async {
+    return _channel.invokeMethod<bool?>('add2Cal', <String, dynamic>{
       'title': event.title,
       'desc': event.description,
       'location': event.location,
@@ -19,7 +21,7 @@ class Add2Calendar {
       'timeZone': event.timeZone,
       'alarmInterval': event.alarmInterval?.inSeconds.toDouble(),
       'allDay': event.allDay,
-    });
-    return isAdded;
+      'noUI': androidNoUI,
+    }).then((value) => value ?? false);
   }
 }

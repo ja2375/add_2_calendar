@@ -11,9 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Event event = Event(
-      startDate: DateTime(2020, 1, 1, 9),
-      endDate: DateTime(2020, 1, 1, 10),
-      title: "Title",
+      title: 'Test event',
+      description: 'example',
+      location: 'Flutter app',
+      startDate: DateTime.now(),
+      endDate: DateTime.now().add(Duration(minutes: 30)),
+      alarmInterval: Duration(minutes: 40),
+      allDay: false,
     );
 
     return MaterialApp(
@@ -26,9 +30,10 @@ class MyApp extends StatelessWidget {
           child: ElevatedButton(
             child: const Text('Add test event to device calendar'),
             onPressed: () {
-              Add2Calendar.addEvent2Cal(event).then((success) {
+              Add2Calendar.addEvent2Cal(event, androidNoUI: false)
+                  .then((success) {
                 scaffoldMessengerKey.currentState!.showSnackBar(
-                    SnackBar(content: Text(success! ? 'Success' : 'Error')));
+                    SnackBar(content: Text(success ? 'Success' : 'Error')));
               });
             },
           ),

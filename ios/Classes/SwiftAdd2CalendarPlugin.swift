@@ -22,18 +22,18 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       if call.method == "add2Cal" {
-          let args = call.arguments as! [String:Any]
-          let title = args["title"] as! String
-          let desc = args["desc"] as! String
-          let location = args["location"] as! String
-          let timeZone = TimeZone(identifier: args["timeZone"] as! String)
+        let args = call.arguments as! [String:Any]
+        let title = args["title"] as! String
+        let desc = args["desc"] as! String
+        let location = args["location"] as! String
+        let timeZone = args["timeZone"] is NSNull ? nil: TimeZone(identifier: args["timeZone"] as! String)
           
           addEventToCalendar(title: title,
                              description: desc,
                              location: location,
                              startDate: Date(milliseconds: (args["startDate"] as! Double)),
                              endDate: Date(milliseconds: (args["endDate"] as! Double)),
-                             timeZone: timeZone,
+                             timeZone:timeZone,
                              alarmInterval: args["alarmInterval"] as? Double,
                              allDay: args["allDay"] as! Bool,
                              completion: { (success) -> Void in

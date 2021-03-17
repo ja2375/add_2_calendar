@@ -28,3 +28,6 @@ android {
         minSdkVersion 16
     }
 }
+dependencies {
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+}
