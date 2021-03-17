@@ -53,6 +53,19 @@ Add2Calendar.addEvent2Cal(event, androidNoUI:true);
 ```
 To call without UI, you will need permission beforehand, as this plugin is not intended for permissions, when trying to add to calendar, it will check for permissions and request if needed, canceling the current action. Once the permission has been granted, the event will be added. If you think this can be improved, a PR would be greatly appreciated.
 
+## iOS language support
+By default the ios screen that appears to save the event will be displayed in English, to support diffrent languages, add to your info.plist the languages you are supporting.
+
+
+```xml
+<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>es</string>
+		<string>ja</string>
+	</array>
+```
+
 
 
 Note: See [DateTime docs](https://api.flutter.dev/flutter/dart-core/DateTime-class.html) to know what valid date could be correct in above piece of code.
