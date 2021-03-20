@@ -98,7 +98,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
                         (boolean) call.argument("noUI"));
                 result.success(true);
             } catch (NullPointerException e) {
-                result.error("Exception ocurred in Android code", e.getMessage(), false);
+                result.error("Exception occurred in Android code", e.getMessage(), false);
             }
         } else {
             result.notImplemented();
@@ -167,21 +167,5 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
             cr.insert(CalendarContract.Reminders.CONTENT_URI, values);
         }
     }
-
-    /** Returns Calendar Base URI, supports both new and old OS. */
-//  private String getCalendarUriBase(boolean eventUri) {
-//     Uri calendarURI = null;
-//     try {
-//         if (android.os.Build.VERSION.SDK_INT <= 7) {
-//             calendarURI = (eventUri) ? Uri.parse("content://calendar/") : Uri.parse("content://calendar/calendars");
-//         } else {
-//             calendarURI = (eventUri) ? Uri.parse("content://com.android.calendar/") : Uri
-//                     .parse("content://com.android.calendar/calendars");
-//         }
-//     } catch (Exception e) {
-//         e.printStackTrace();
-//     }
-//     return calendarURI.toString();
-// }
 
 }

@@ -22,7 +22,7 @@ The plugin doesn't need any special permissions by default to add events to the 
 In order to make this plugin work on iOS 10+, be sure to add this to your `info.plist` file:
 
 ```xml
-<key>NSContactsUsageDescription</key>
+<key>NSCalendarsUsageDescription</key>
 <string>INSERT_REASON_HERE</string>
 ```
 
