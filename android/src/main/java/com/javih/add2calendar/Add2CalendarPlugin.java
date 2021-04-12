@@ -39,6 +39,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
     /**
      * backward compatibility with embedding v1
      **/
+    @SuppressWarnings("deprecation") // Registrar deprecated (v1 plugin embedding).
     public static void registerWith(Registrar registrar) {
         Add2CalendarPlugin plugin = new Add2CalendarPlugin();
         plugin.activity = registrar.activity();
