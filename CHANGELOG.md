@@ -1,3 +1,6 @@
+## 2.0.2
+* Updated Documentation, manually removed v1 embedding deprecated warning 
+
 ## 2.0.1
 * Updated Android gradle and migrated example to v2. Fixes deprecated api message
 
