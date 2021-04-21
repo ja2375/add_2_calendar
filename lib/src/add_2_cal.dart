@@ -21,6 +21,8 @@ class Add2Calendar {
       'timeZone': event.timeZone,
       'alarmInterval': event.alarmInterval?.inSeconds.toDouble(),
       'allDay': event.allDay,
+      'rRule': event.rRule,
+      'duration': event.duration,
       'noUI': androidNoUI,
     }).then((value) => value ?? false);
   }

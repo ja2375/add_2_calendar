@@ -95,6 +95,8 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
                         (long) call.argument("endDate"),
                         (String) call.argument("timeZone"),
                         (boolean) call.argument("allDay"),
+                        (String) call.argument("rRule"),
+                        (String) call.argument("duration"),
                         (Double) call.argument("alarmInterval"),
                         (boolean) call.argument("noUI"));
                 result.success(true);
@@ -106,9 +108,9 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         }
     }
 
-    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, Double alarm, boolean noUI) {
+    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, String rRule, String duration, Double alarm, boolean noUI) {
         if (noUI) {
-            insertNoUI(title, desc, loc, start, end, timeZone, allDay, alarm);
+            insertNoUI(title, desc, loc, start, end, timeZone, allDay, rRule, duration, alarm);
             return;
         }
         Context mContext = activity != null ? activity : context;
@@ -121,6 +123,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
         intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
+        intent.putExtra(CalendarContract.Events.RRULE, rRule);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -128,7 +131,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
     /**
      * Adds Events and Reminders in Calendar.
      */
-    private void insertNoUI(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, Double alarm) {
+    private void insertNoUI(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, String rRule, String duration, Double alarm) {
         final int callbackId = 42;
 
 
@@ -151,9 +154,16 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, desc);
         values.put(CalendarContract.Events.ALL_DAY, allDay);
+        values.put(CalendarContract.Events.RRULE, rRule);
         values.put(CalendarContract.Events.EVENT_LOCATION, loc);
         values.put(CalendarContract.Events.DTSTART, start);
-        values.put(CalendarContract.Events.DTEND, end);
+
+        if (duration == null) {
+            values.put(CalendarContract.Events.DTEND, end);
+        } else {
+            values.put(CalendarContract.Events.DURATION, duration);
+        }
+
         values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone != null ? timeZone :timeZone2.getID());
 
         Uri event = cr.insert(EVENTS_URI, values);

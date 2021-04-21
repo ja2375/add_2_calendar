@@ -4,6 +4,8 @@ class Event {
   String? timeZone;
   DateTime startDate, endDate;
   bool allDay;
+  String rRule;
+  String duration;
   //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
   Duration? alarmInterval;
 
@@ -16,5 +18,7 @@ class Event {
     this.alarmInterval,
     this.timeZone,
     this.allDay = false,
+    this.rRule = '',
+    this.duration = '',
   });
 }
