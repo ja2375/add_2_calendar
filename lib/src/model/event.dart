@@ -1,11 +1,17 @@
+import 'dart:io';
+
+import 'package:add_2_calendar/src/model/recurrence.dart';
+
 /// Class that holds each event's info.
 class Event {
   String title, description, location;
   String? timeZone;
   DateTime startDate, endDate;
   bool allDay;
-  //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
-  Duration? alarmInterval;
+
+  IOSParams iosParams;
+  AndroidParams androidParams;
+  Recurrence? recurrence;
 
   Event({
     required this.title,
@@ -13,8 +19,43 @@ class Event {
     this.location = '',
     required this.startDate,
     required this.endDate,
-    this.alarmInterval,
     this.timeZone,
     this.allDay = false,
+    this.iosParams = const IOSParams(),
+    this.androidParams = const AndroidParams(),
+    this.recurrence,
   });
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = {
+      'title': title,
+      'desc': description,
+      'location': location,
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch,
+      'timeZone': timeZone,
+      'allDay': allDay,
+      'recurrence': recurrence?.toJson(),
+    };
+
+    if (Platform.isIOS) {
+      params['alarmInterval'] = iosParams.reminder?.inSeconds.toDouble();
+    } else {
+      params['invites'] = androidParams.emailInvites?.join(",");
+    }
+
+    return params;
+  }
+}
+
+class AndroidParams {
+  final List<String>? emailInvites;
+
+  const AndroidParams({this.emailInvites});
+}
+
+class IOSParams {
+  //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
+  final Duration? reminder;
+  const IOSParams({this.reminder});
 }
