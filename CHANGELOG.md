@@ -1,3 +1,8 @@
+## 2.1.0
+* Added event recurrency
+* Added invite emails for Android
+* Moved alarmInterval to platform specific iOSParams
+
 ## 2.0.2
 * Updated Documentation, manually removed v1 embedding deprecated warning 
 

@@ -8,7 +8,7 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  add_2_calendar: ^2.0.2
+  add_2_calendar: ^2.1.0
 ```
 ### Android integration
 The plugin doesn't need any special permissions by default to add events to the calendar. However, events can also be added without launching the calendar application, for this it is needed to add calendar permissions to your `AndroidManifest.xml`
@@ -36,8 +36,13 @@ final Event event = Event(
       description: 'Event description',
       location: 'Event location',
       startDate: DateTime(/* Some date here */),
-      alarmInterval: Duration(/* Ex. days:1 */), // on iOS, you can set alarm notification after your event. Android see below
       endDate: DateTime(/* Some date here */),
+      iosParams: IOSParams( 
+        reminder: Duration(/* Ex. hours:1 */), // on iOS, you can set alarm notification after your event.
+      ),
+      androidParams: AndroidParams( 
+        emailInvites: [], // on Android, you can add invite emails to your event.
+      ),
     );
 ...
 Add2Calendar.addEvent2Cal(event);
@@ -45,13 +50,19 @@ Add2Calendar.addEvent2Cal(event);
 ```
 This will launch the default calendar application to confirm the event and add it to your calendar.
 
-## Android Reminders
-Currently reminders will only be added on android by not launching the calendar app, to use this, simply call:
+## Recurring events
+You can add recurrency to your events by specifying a frequency. Optional parameters such as `interval`, `ocurrances` and `endDate` can also be added.
 
 ``` dart
-Add2Calendar.addEvent2Cal(event, androidNoUI:true);
+ Event(
+   ...
+  recurrence: Recurrence(
+        frequency: Frequency.monthly,
+        interval: 2,
+        ocurrences: 6,
+      ),
+    );
 ```
-To call without UI, you will need permission beforehand, as this plugin is not intended for permissions, when trying to add to calendar, it will check for permissions and request if needed, canceling the current action. Once the permission has been granted, the event will be added. If you think this can be improved, a PR would be greatly appreciated.
 
 ## iOS language support
 By default the ios screen that appears to save the event will be displayed in English, to support diffrent languages, add to your info.plist the languages you are supporting.
