@@ -20,8 +20,7 @@ class MyApp extends StatelessWidget {
         reminder: Duration(minutes: 40),
       ),
       androidParams: AndroidParams(
-        noUI: false,
-        emailInvites: ["diego@hometask.mx"],
+        emailInvites: ["test@example.com"],
       ),
       recurrence: recurrence,
     );
@@ -87,7 +86,6 @@ class MyApp extends StatelessWidget {
                   recurrence: Recurrence(
                     frequency: Frequency.yearly,
                     rRule: 'FREQ=YEARLY;COUNT=10;WKST=SU',
-                    androidNoUIEventDuration: 'P2W',
                   ),
                 ));
               },

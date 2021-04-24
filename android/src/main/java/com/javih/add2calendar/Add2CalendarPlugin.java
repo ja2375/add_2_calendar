@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
 
@@ -101,9 +102,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
                         (String) call.argument("timeZone"),
                         (boolean) call.argument("allDay"),
                         (HashMap) call.argument("recurrence"),
-                        (Double) call.argument("alarmInterval"),
-                        (String) call.argument("invites"),
-                        (boolean) call.argument("noUI")
+                        (String) call.argument("invites")
                 );
                 result.success(true);
             } catch (NullPointerException e) {
@@ -114,11 +113,8 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         }
     }
 
-    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, HashMap recurrence, Double alarm, String invites, boolean noUI) {
-        if (noUI) {
-            insertNoUI(title, desc, loc, start, end, timeZone, allDay, recurrence, alarm, invites);
-            return;
-        }
+    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, HashMap recurrence, String invites) {
+
         Context mContext = activity != null ? activity : context;
         Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
         intent.putExtra(CalendarContract.Events.TITLE, title);
@@ -133,7 +129,6 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         if (recurrence != null) {
             intent.putExtra(CalendarContract.Events.RRULE, buildRRule(recurrence));
         }
-
 
         if (invites != null) {
             intent.putExtra(Intent.EXTRA_EMAIL, invites);
@@ -193,7 +188,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_CALENDAR}, callbackId);
             return;
         }
-        TimeZone timeZone2 = TimeZone.getDefault();
+        TimeZone timeZone2 = TimeZone.getTimeZone("UTC");
 
         //  Calendar cal = Calendar.getInstance();
         Context mContext = activity != null ? activity : context;
@@ -202,7 +197,7 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
 
         /** Inserting an event in calendar. */
         ContentValues values = new ContentValues();
-        values.put(CalendarContract.Events.CALENDAR_ID, 1);
+        values.put(CalendarContract.Events.CALENDAR_ID, 3);
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, desc);
         values.put(CalendarContract.Events.ALL_DAY, allDay);
@@ -224,15 +219,19 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
 
         Uri event = cr.insert(EVENTS_URI, values);
 
+        Long eventId =  Long.parseLong(event.getLastPathSegment());
+
         if (alarm != null) {
             /** Adding reminder for event added. */
-            values.put(CalendarContract.Events.HAS_ALARM, 1);
-            values = new ContentValues();
-            values.put(CalendarContract.Reminders.EVENT_ID, Long.parseLong(event.getLastPathSegment()));
-            values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
-            values.put(CalendarContract.Reminders.MINUTES, alarm / 60);
-            cr.insert(CalendarContract.Reminders.CONTENT_URI, values);
+            ContentValues reminderValues = new ContentValues();
+            reminderValues.put(CalendarContract.Events.HAS_ALARM, 1);
+            reminderValues = new ContentValues();
+            reminderValues.put(CalendarContract.Reminders.EVENT_ID, eventId);
+            reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+            reminderValues.put(CalendarContract.Reminders.MINUTES, alarm / 60);
+            cr.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues);
         }
     }
+
 
 }
