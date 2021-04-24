@@ -13,6 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -95,10 +100,11 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
                         (long) call.argument("endDate"),
                         (String) call.argument("timeZone"),
                         (boolean) call.argument("allDay"),
-                        (String) call.argument("rRule"),
-                        (String) call.argument("duration"),
+                        (HashMap) call.argument("recurrence"),
                         (Double) call.argument("alarmInterval"),
-                        (boolean) call.argument("noUI"));
+                        (String) call.argument("invites"),
+                        (boolean) call.argument("noUI")
+                );
                 result.success(true);
             } catch (NullPointerException e) {
                 result.error("Exception occurred in Android code", e.getMessage(), false);
@@ -108,9 +114,9 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         }
     }
 
-    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, String rRule, String duration, Double alarm, boolean noUI) {
+    private void insert(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, HashMap recurrence, Double alarm, String invites, boolean noUI) {
         if (noUI) {
-            insertNoUI(title, desc, loc, start, end, timeZone, allDay, rRule, duration, alarm);
+            insertNoUI(title, desc, loc, start, end, timeZone, allDay, recurrence, alarm, invites);
             return;
         }
         Context mContext = activity != null ? activity : context;
@@ -123,15 +129,61 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
         intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
-        intent.putExtra(CalendarContract.Events.RRULE, rRule);
+
+        if (recurrence != null) {
+            intent.putExtra(CalendarContract.Events.RRULE, buildRRule(recurrence));
+        }
+
+
+        if (invites != null) {
+            intent.putExtra(Intent.EXTRA_EMAIL, invites);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+    }
+
+    private String buildRRule(HashMap recurrence) {
+        String rRule = (String) recurrence.get("rRule");
+        if (rRule == null) {
+            rRule = "";
+            Integer freqEnum = (Integer) recurrence.get("frequency");
+            if (freqEnum != null) {
+                rRule += "FREQ=";
+                switch (freqEnum) {
+                    case 0:
+                        rRule += "DAILY";
+                        break;
+                    case 1:
+                        rRule += "WEEKLY";
+                        break;
+                    case 2:
+                        rRule += "MONTHLY";
+                        break;
+                    case 3:
+                        rRule += "YEARLY";
+                        break;
+                }
+                rRule += ";";
+            }
+            rRule += "INTERVAL=" + (int) recurrence.get("interval") + ";";
+            Integer ocurrences = (Integer) recurrence.get("ocurrences");
+            if (ocurrences != null) {
+                rRule += "COUNT=" + ocurrences.intValue() + ";";
+            }
+            Long endDateMillis = (Long) recurrence.get("endDate");
+            if (endDateMillis != null) {
+                Date  endDate = new Date(endDateMillis);
+                DateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
+                rRule += "UNTIL=" + formatter.format(endDate ) + ";";
+            }
+        }
+        return rRule;
     }
 
     /**
      * Adds Events and Reminders in Calendar.
      */
-    private void insertNoUI(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, String rRule, String duration, Double alarm) {
+    private void insertNoUI(String title, String desc, String loc, long start, long end, String timeZone, boolean allDay, HashMap recurrence, Double alarm, String invites) {
         final int callbackId = 42;
 
 
@@ -154,17 +206,21 @@ public class Add2CalendarPlugin implements MethodCallHandler, FlutterPlugin, Act
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, desc);
         values.put(CalendarContract.Events.ALL_DAY, allDay);
-        values.put(CalendarContract.Events.RRULE, rRule);
         values.put(CalendarContract.Events.EVENT_LOCATION, loc);
         values.put(CalendarContract.Events.DTSTART, start);
 
-        if (duration == null) {
-            values.put(CalendarContract.Events.DTEND, end);
+        if (recurrence != null) {
+            values.put(CalendarContract.Events.RRULE, buildRRule(recurrence));
+            values.put(CalendarContract.Events.DURATION, (String) recurrence.get("androidNoUIEventDuration"));
         } else {
-            values.put(CalendarContract.Events.DURATION, duration);
+            values.put(CalendarContract.Events.DTEND, end);
         }
 
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone != null ? timeZone :timeZone2.getID());
+        if (invites != null) {
+            values.put(Intent.EXTRA_EMAIL, invites);
+        }
+
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone != null ? timeZone : timeZone2.getID());
 
         Uri event = cr.insert(EVENTS_URI, values);
 
