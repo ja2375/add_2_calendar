@@ -1,3 +1,7 @@
+## 2.1.1
+* migrated project into new project template
+* migrated java code into kotlin
+
 ## 2.1.0
 * Added event recurrency
 * Added invite emails for Android

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 class Add2Calendar {
   static const MethodChannel _channel =
-      const MethodChannel('flutter.javih.com/add_2_calendar');
+      const MethodChannel('add_2_calendar');
 
   /// Add an Event (object) to user's default calendar.
   static Future<bool> addEvent2Cal(Event event) async {
