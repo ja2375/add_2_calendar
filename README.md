@@ -15,6 +15,15 @@ The plugin doesn't need any special permissions by default to add events to the 
 ```xml
 <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 <uses-permission android:name="android.permission.READ_CALENDAR" />
+
+Starting from API 30 Android requires package visibility configuration in your AndroidManifest.xml otherwise canLaunch will return false. A <queries> element must be added to your manifest as a child of the root element. See the Android documentation for examples of other queries.
+
+<queries>
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="https" />
+  </intent>
+</queries>
 ```
 
 ### iOS integration
