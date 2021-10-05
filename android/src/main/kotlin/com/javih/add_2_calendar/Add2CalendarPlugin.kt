@@ -76,12 +76,10 @@ class Add2CalendarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun insert(title: String, desc:String,  loc:String,  start:Long,  end:Long,  timeZone:String?,  allDay:Boolean,  recurrence:HashMap<String,Any>?,  invites:String?): Boolean {
 
         val mContext: Context = if (activity != null) activity!!.applicationContext else context!!
-        val intent = Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI)
+        val intent = Intent(Intent.ACTION_INSERT)
 
 
-        if (!isAvailable(mContext, intent)) {
-            return false
-        }
+        intent.data = CalendarContract.Events.CONTENT_URI
         intent.putExtra(CalendarContract.Events.TITLE, title)
         intent.putExtra(CalendarContract.Events.DESCRIPTION, desc)
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc)
@@ -99,8 +97,12 @@ class Add2CalendarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             intent.putExtra(Intent.EXTRA_EMAIL, invites)
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        mContext.startActivity(intent)
-        return true
+
+        if(intent.resolveActivity(mContext.packageManager)!= null){
+            mContext.startActivity(intent)
+            return true
+        }
+        return false;
     }
 
 
@@ -134,11 +136,5 @@ class Add2CalendarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         return rRule
     }
-
-    fun isAvailable(ctx: Context, intent: Intent): Boolean {
-        val list = ctx.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        return list.size > 0
-    }
-
 
 }

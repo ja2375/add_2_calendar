@@ -1,3 +1,6 @@
+## 2.1.2
+Android 11 support
+
 ## 2.1.1
 * migrated project into new project template
 * migrated java code into kotlin
