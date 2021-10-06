@@ -17,6 +17,17 @@ The plugin doesn't need any special permissions by default to add events to the 
 <uses-permission android:name="android.permission.READ_CALENDAR" />
 ```
 
+Starting from API 30 Android requires package visibility configuration in your AndroidManifest.xml. A <queries> element must be added to your manifest as a child of the root element. See the Android documentation for examples of other queries.
+
+``` xml
+<queries>
+  <intent>
+    <action android:name="android.intent.action.INSERT" />
+    <data android:mimeType="vnd.android.cursor.item/event" />
+  </intent>
+</queries>
+ ```
+
 ### iOS integration
 
 In order to make this plugin work on iOS 10+, be sure to add this to your `info.plist` file:
