@@ -10,7 +10,9 @@
     </queries>
    <application
         android:label="add_2_calendar_example"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:name="${applicationName}"
+        >
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

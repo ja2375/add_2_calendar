@@ -1,3 +1,6 @@
+## 2.1.3
+Flutter 2.10 support
+
 ## 2.1.2
 Android 11 support
 
