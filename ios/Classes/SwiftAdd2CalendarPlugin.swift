@@ -46,6 +46,8 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         let endDate = Date(milliseconds: (args["endDate"] as! Double))
         let alarmInterval = args["alarmInterval"] as? Double
         let allDay = args["allDay"] as! Bool
+        let url = args["url"] as! String
+        
         
         let eventStore = EKEventStore()
         
@@ -64,6 +66,7 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
                 event.location = location
                 event.notes = description
                 event.isAllDay = allDay
+                event.url = URL(string: url);
                 
                 if let recurrence = args["recurrence"] as? [String:Any]{
                     let interval = recurrence["interval"] as! Int

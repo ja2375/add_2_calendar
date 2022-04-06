@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       allDay: false,
       iosParams: IOSParams(
         reminder: Duration(minutes: 40),
+        url: "http://example.com",
       ),
       androidParams: AndroidParams(
         emailInvites: ["test@example.com"],

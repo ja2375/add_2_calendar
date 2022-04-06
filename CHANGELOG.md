@@ -1,3 +1,6 @@
+# 2.2.0
+* Add support for setting URL on iOS devices
+
 ## 2.1.3
 Flutter 2.10 support
 
