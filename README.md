@@ -37,6 +37,14 @@ In order to make this plugin work on iOS 10+, be sure to add this to your `info.
 <string>INSERT_REASON_HERE</string>
 ```
 
+`NSContactsUsageDescription` is required for the location autocomplete once Apple's UI is opened, so 
+it is highly recommended that you also add the key, the app might crash otherwise.
+
+```xml
+<key>NSContactsUsageDescription</key>
+<string>INSERT_REASON_HERE</string>
+```
+
 ## Use it
 
 ```dart
