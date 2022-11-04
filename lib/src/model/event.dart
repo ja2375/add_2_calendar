@@ -4,9 +4,12 @@ import 'package:add_2_calendar/src/model/recurrence.dart';
 
 /// Class that holds each event's info.
 class Event {
-  String title, description, location;
+  String title;
+  String? description;
+  String? location;
   String? timeZone;
-  DateTime startDate, endDate;
+  DateTime startDate;
+  DateTime endDate;
   bool allDay;
 
   IOSParams iosParams;
@@ -15,8 +18,8 @@ class Event {
 
   Event({
     required this.title,
-    this.description = '',
-    this.location = '',
+    this.description,
+    this.location,
     required this.startDate,
     required this.endDate,
     this.timeZone,
@@ -59,5 +62,6 @@ class IOSParams {
   //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
   final Duration? reminder;
   final String? url;
+
   const IOSParams({this.reminder, this.url});
 }

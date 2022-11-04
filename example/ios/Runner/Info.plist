@@ -53,5 +53,7 @@
 	<string>Create events</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Add people to event</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>
