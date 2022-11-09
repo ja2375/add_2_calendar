@@ -1,3 +1,5 @@
+# 2.2.1
+* Fix crash when no url is provided on iOS
 # 2.2.0
 * Add support for setting URL on iOS devices
 * Description and location optional
