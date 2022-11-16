@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:add_2_calendar/add_2_calendar.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,7 +16,8 @@ class MyApp extends StatelessWidget {
       endDate: DateTime.now().add(Duration(minutes: 30)),
       allDay: false,
       iosParams: IOSParams(
-        reminder: Duration(minutes: 40),
+        alert: Duration(minutes: 20),
+        secondAlert: Duration(minutes: 30),
         url: "http://example.com",
       ),
       androidParams: AndroidParams(
@@ -79,8 +79,7 @@ class MyApp extends StatelessWidget {
             Divider(),
             ListTile(
               title: const Text('Add event with recurrence 3'),
-              subtitle:
-                  const Text("RRULE (android only) every year for 10 years"),
+              subtitle: const Text("RRULE (android only) every year for 10 years"),
               trailing: Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(buildEvent(
