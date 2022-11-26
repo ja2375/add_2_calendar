@@ -1,3 +1,5 @@
+# 2.2.2
+* Fixed android location field
 # 2.2.1
 * Fix crash when no url is provided on iOS
 # 2.2.0
