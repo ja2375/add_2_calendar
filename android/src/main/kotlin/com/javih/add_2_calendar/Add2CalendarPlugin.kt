@@ -98,7 +98,7 @@ class Add2CalendarPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         if (loc != null) {
-            intent.putExtra(CalendarContract.Events.LOCATION, loc)
+            intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc)
         }
 
         intent.putExtra(CalendarContract.Events.EVENT_TIMEZONE, timeZone)

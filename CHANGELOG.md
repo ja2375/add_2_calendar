@@ -1,3 +1,5 @@
+# 2.2.3
+* Fixed android location field
 # 2.2.2
 * Fixed android location field
 # 2.2.1
