@@ -42,7 +42,8 @@ class Event {
     };
 
     if (Platform.isIOS) {
-      params['alarmInterval'] = iosParams.reminder?.inSeconds.toDouble();
+      params['primaryAlert'] = iosParams.alert?.inSeconds.toDouble();
+      params['secondaryAlert'] = iosParams.secondAlert?.inSeconds.toDouble();
       params['url'] = iosParams.url;
     } else {
       params['invites'] = androidParams.emailInvites?.join(",");
@@ -60,8 +61,17 @@ class AndroidParams {
 
 class IOSParams {
   //In iOS, you can set alert notification with duration. Ex. Duration(minutes:30) -> After30 min.
-  final Duration? reminder;
+
+  final Duration? alert;
+
+  /// Second alert must be less than or equal to Primary alert(alert)
+  ///
+  /// Second Alert can only be set only if alert is already set
+  final Duration? secondAlert;
   final String? url;
 
-  const IOSParams({this.reminder, this.url});
+  const IOSParams({this.alert, this.secondAlert, this.url})
+      : assert((secondAlert == null && alert == null) ||
+            (secondAlert == null) ||
+            ((alert != null) && secondAlert >= alert));
 }
