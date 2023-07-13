@@ -1,3 +1,5 @@
+# 2.2.4
+* Fixed new version swift issue for default switch case
 # 2.2.3
 * Fixed android location field
 # 2.2.2
