@@ -48,51 +48,49 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
         let allDay = args["allDay"] as! Bool
         let url = args["url"] as? String
         
-        
         let eventStore = EKEventStore()
+        let event = createEvent(eventStore: eventStore, alarmInterval: alarmInterval, title: title, description: description, location: location, timeZone: timeZone, startDate: startDate, endDate: endDate, allDay: allDay, url: url, args: args)
+
+        presentCalendarModalToAddEvent(event, eventStore: eventStore, completion: completion)
+    }
+    
+    private func createEvent(eventStore: EKEventStore, alarmInterval: Double?, title: String, description: String?, location: String?, timeZone: TimeZone?, startDate: Date?, endDate: Date?, allDay: Bool, url: String?, args: [String:Any]) -> EKEvent {
+        let event = EKEvent(eventStore: eventStore)
+        if let alarm = alarmInterval{
+            event.addAlarm(EKAlarm(relativeOffset: alarm*(-1)))
+        }
+        event.title = title
+        event.startDate = startDate
+        event.endDate = endDate
+        if (timeZone != nil) {
+            event.timeZone = timeZone
+        }
+        if (location != nil) {
+            event.location = location
+        }
+        if (description != nil) {
+            event.notes = description
+        }
+        if let url = url{
+            event.url = URL(string: url);
+        }
+        event.isAllDay = allDay
         
-        eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
-            if (granted) && (error == nil) {
-                let event = EKEvent(eventStore: eventStore)
-                if let alarm = alarmInterval{
-                    event.addAlarm(EKAlarm(relativeOffset: alarm*(-1)))
-                }
-                event.title = title
-                event.startDate = startDate
-                event.endDate = endDate
-                if (timeZone != nil) {
-                    event.timeZone = timeZone
-                }
-                if (location != nil) {
-                    event.location = location
-                }
-                if (description != nil) {
-                    event.notes = description
-                }
-                if let url = url{
-                    event.url = URL(string: url);
-                }
-                event.isAllDay = allDay
-                
-                if let recurrence = args["recurrence"] as? [String:Any]{
-                    let interval = recurrence["interval"] as! Int
-                    let frequency = recurrence["frequency"] as! Int
-                    let end = recurrence["endDate"] as? Double// Date(milliseconds: (args["startDate"] as! Double))
-                    let ocurrences = recurrence["ocurrences"] as? Int
-                    
-                    let recurrenceRule = EKRecurrenceRule.init(
-                        recurrenceWith: EKRecurrenceFrequency(rawValue: frequency)!,
-                        interval: interval,
-                        end: ocurrences != nil ? EKRecurrenceEnd.init(occurrenceCount: ocurrences!) : end != nil ? EKRecurrenceEnd.init(end: Date(milliseconds: end!)) : nil
-                    )
-                    event.recurrenceRules = [recurrenceRule]
-                }
-                
-                self?.presentCalendarModalToAddEvent(event, eventStore: eventStore, completion: completion)
-            } else {
-                completion?(false)
-            }
-        })
+        if let recurrence = args["recurrence"] as? [String:Any]{
+            let interval = recurrence["interval"] as! Int
+            let frequency = recurrence["frequency"] as! Int
+            let end = recurrence["endDate"] as? Double// Date(milliseconds: (args["startDate"] as! Double))
+            let ocurrences = recurrence["ocurrences"] as? Int
+            
+            let recurrenceRule = EKRecurrenceRule.init(
+                recurrenceWith: EKRecurrenceFrequency(rawValue: frequency)!,
+                interval: interval,
+                end: ocurrences != nil ? EKRecurrenceEnd.init(occurrenceCount: ocurrences!) : end != nil ? EKRecurrenceEnd.init(end: Date(milliseconds: end!)) : nil
+            )
+            event.recurrenceRules = [recurrenceRule]
+        }
+        
+        return event
     }
 
     private func getAuthorizationStatus() -> EKAuthorizationStatus {
@@ -102,32 +100,38 @@ public class SwiftAdd2CalendarPlugin: NSObject, FlutterPlugin {
     // Show event kit ui to add event to calendar
     
     func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
-        let authStatus = getAuthorizationStatus()
-        switch authStatus {
-        case .authorized:
+        if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
                 self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
             }
-            completion?(true)
-        case .notDetermined:
-            //Auth is not determined
-            //We should request access to the calendar
-            eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
-                if granted {
-                    OperationQueue.main.addOperation {
-                        self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
-                    }
-                    completion?(true)
-                } else {
-                    // Auth denied
-                    completion?(false)
+        } else {
+            let authStatus = getAuthorizationStatus()
+            switch authStatus {
+            case .authorized:
+                OperationQueue.main.addOperation {
+                    self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                 }
-            })
-        case .denied, .restricted:
-            // Auth denied or restricted
-            completion?(false)
-        default:
-            completion?(false)
+                completion?(true)
+            case .notDetermined:
+                //Auth is not determined
+                //We should request access to the calendar
+                eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
+                    if granted {
+                        OperationQueue.main.addOperation {
+                            self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
+                        }
+                        completion?(true)
+                    } else {
+                        // Auth denied
+                        completion?(false)
+                    }
+                })
+            case .denied, .restricted:
+                // Auth denied or restricted
+                completion?(false)
+            default:
+                completion?(false)
+            }
         }
     }
     
@@ -160,4 +164,3 @@ extension SwiftAdd2CalendarPlugin: EKEventEditViewDelegate {
         })
     }
 }
-
