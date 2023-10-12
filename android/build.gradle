@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1'
+        classpath 'com.android.tools.build:gradle:8.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,9 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    if (project.android.hasProperty("namespace")) {
-        namespace "com.javih.add_2_calendar"
-    }
+    namespace "com.javih.add_2_calendar"
     compileSdkVersion 33
 
     sourceSets {
@@ -35,6 +33,10 @@ android {
     }
     defaultConfig {
         minSdkVersion 16
+    }
+    compileOptions {
+        sourceCompatibility = 17
+        targetCompatibility = 17
     }
 }
 

@@ -1,3 +1,5 @@
+# 2.2.5
+* Changed Gradle version to 8.4
 # 2.2.4
 * Fixed new version swift issue for default switch case
 # 2.2.3
