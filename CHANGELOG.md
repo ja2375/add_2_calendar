@@ -1,3 +1,5 @@
+# 3.0.0
+* Rebuilt plugin with latest plugin generator
 # 2.2.5
 * Changed Gradle version to 8.4
 * Support for iOS 17
