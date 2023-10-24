@@ -8,19 +8,21 @@ class MyApp extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
+  MyApp({super.key});
+
   Event buildEvent({Recurrence? recurrence}) {
     return Event(
-      title: 'Test eventeee',
+      title: 'Test event',
       description: 'example',
       location: 'Flutter app',
       startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(minutes: 30)),
+      endDate: DateTime.now().add(const Duration(minutes: 30)),
       allDay: false,
-      iosParams: IOSParams(
+      iosParams: const IOSParams(
         reminder: Duration(minutes: 40),
         url: "http://example.com",
       ),
-      androidParams: AndroidParams(
+      androidParams: const AndroidParams(
         emailInvites: ["test@example.com"],
       ),
       recurrence: recurrence,
@@ -39,33 +41,33 @@ class MyApp extends StatelessWidget {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListTile(
-              title: Text('Add normal event'),
-              trailing: Icon(Icons.calendar_today),
+              title: const Text('Add normal event'),
+              trailing: const Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(
                   buildEvent(),
                 );
               },
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               title: const Text('Add event with recurrence 1'),
               subtitle: const Text("weekly for 3 months"),
-              trailing: Icon(Icons.calendar_today),
+              trailing: const Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
                     frequency: Frequency.weekly,
-                    endDate: DateTime.now().add(Duration(days: 60)),
+                    endDate: DateTime.now().add(const Duration(days: 60)),
                   ),
                 ));
               },
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               title: const Text('Add event with recurrence 2'),
               subtitle: const Text("every 2 months for 6 times (1 year)"),
-              trailing: Icon(Icons.calendar_today),
+              trailing: const Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
@@ -76,12 +78,12 @@ class MyApp extends StatelessWidget {
                 ));
               },
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               title: const Text('Add event with recurrence 3'),
               subtitle:
                   const Text("RRULE (android only) every year for 10 years"),
-              trailing: Icon(Icons.calendar_today),
+              trailing: const Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
@@ -91,7 +93,7 @@ class MyApp extends StatelessWidget {
                 ));
               },
             ),
-            Divider(),
+            const Divider(),
           ],
         ),
       ),
