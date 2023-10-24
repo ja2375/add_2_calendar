@@ -1,3 +1,5 @@
+# 3.0.1
+* Fixes duplicated compile options on Android
 # 3.0.0
 * Rebuilt plugin with latest plugin generator
 # 2.2.5
