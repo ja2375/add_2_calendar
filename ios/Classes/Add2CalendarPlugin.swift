@@ -21,21 +21,12 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       if call.method == "add2Cal" {
         let args = call.arguments as! [String:Any]
-       
-          
-        addEventToCalendar(from: args,completion:{ (success) -> Void in
-              if success {
-                  result(true)
-              } else {
-                  result(false)
-              }
-          })
+        
+        addEventToCalendar(from: args, result: result)
       }
     }
 
-    private func addEventToCalendar(from args: [String:Any], completion: ((_ success: Bool) -> Void)? = nil) {
-        
-        
+    private func addEventToCalendar(from args: [String:Any], result: @escaping FlutterResult) {
         let title = args["title"] as! String
         let description = args["desc"] is NSNull ? nil: args["desc"] as? String
         let location = args["location"] is NSNull ? nil: args["location"] as? String
@@ -49,7 +40,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         let eventStore = EKEventStore()
         let event = createEvent(eventStore: eventStore, alarmInterval: alarmInterval, title: title, description: description, location: location, timeZone: timeZone, startDate: startDate, endDate: endDate, allDay: allDay, url: url, args: args)
 
-        presentCalendarModalToAddEvent(event, eventStore: eventStore, completion: completion)
+        presentCalendarModalToAddEvent(event, eventStore: eventStore, result: result)
     }
     
     private func createEvent(eventStore: EKEventStore, alarmInterval: Double?, title: String, description: String?, location: String?, timeZone: TimeZone?, startDate: Date?, endDate: Date?, allDay: Bool, url: String?, args: [String:Any]) -> EKEvent {
@@ -97,49 +88,55 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     
     // Show event kit ui to add event to calendar
     
-    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
+    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, result: @escaping FlutterResult) {
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
-                self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
+                self.presentEventCalendarDetailModal(
+                    event: event,
+                    eventStore: eventStore,
+                    result: result
+                )
             }
         } else {
             let authStatus = getAuthorizationStatus()
             switch authStatus {
             case .authorized:
                 OperationQueue.main.addOperation {
-                    self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
+                    self.presentEventCalendarDetailModal(
+                        event: event,
+                        eventStore: eventStore,
+                        result: result
+                    )
                 }
-                completion?(true)
             case .notDetermined:
-                //Auth is not determined
-                //We should request access to the calendar
+                // Auth is not determined
+                // We should request access to the calendar
                 eventStore.requestAccess(to: .event, completion: { [weak self] (granted, error) in
                     if granted {
                         OperationQueue.main.addOperation {
-                            self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
+                            self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore, result: result)
                         }
-                        completion?(true)
                     } else {
                         // Auth denied
-                        completion?(false)
+                        result("permissionDenied")
                     }
                 })
             case .denied, .restricted:
                 // Auth denied or restricted
-                completion?(false)
+                result("permissionDenied")
             default:
-                completion?(false)
+                result("permissionDenied")
             }
         }
     }
     
     // Present edit event calendar modal
     
-    func presentEventCalendarDetailModal(event: EKEvent, eventStore: EKEventStore) {
+    func presentEventCalendarDetailModal(event: EKEvent, eventStore: EKEventStore, result: @escaping FlutterResult) {
         let eventModalVC = EKEventEditViewController()
         eventModalVC.event = event
         eventModalVC.eventStore = eventStore
-        eventModalVC.editViewDelegate = self
+        eventModalVC.editViewDelegate = Add2CalendarEditViewDelegate(result: result)
         
         if #available(iOS 13, *) {
             eventModalVC.modalPresentationStyle = .fullScreen
@@ -154,9 +151,20 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     }
 }
 
-extension Add2CalendarPlugin: EKEventEditViewDelegate {
+class Add2CalendarEditViewDelegate: NSObject, EKEventEditViewDelegate {
+    final var result: FlutterResult
+
+    init(result: @escaping FlutterResult) {
+        self.result = result
+    }
     
     public func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        if action == .saved {
+            result("success")
+        } else {
+            result("canceled")
+        }
+
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
         })

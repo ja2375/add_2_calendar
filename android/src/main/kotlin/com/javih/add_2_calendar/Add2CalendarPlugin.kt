@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.CalendarContract
+import android.Manifest
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -13,13 +15,14 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 /** Add2CalendarPlugin */
-class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
+class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -27,6 +30,8 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   private lateinit var channel : MethodChannel
   private var activity: Activity? = null
   private var context: Context? = null
+
+  private var flutterResult: Result? = null
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
@@ -36,7 +41,8 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
  
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
       if (call.method == "add2Cal") {
-          val success = insert(
+          flutterResult = result
+          insert(
               call.argument("title")!!,
               call.argument("desc") as String?,
               call.argument("location") as String?,
@@ -47,8 +53,6 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
               call.argument("recurrence") as HashMap<String, Any>?,
               call.argument("invites") as String?
           )
-          result.success(success)
-
       } else {
           result.notImplemented()
       }
@@ -58,8 +62,9 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     channel.setMethodCallHandler(null)
   }
 
- override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        binding.addActivityResultListener(this)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -84,11 +89,10 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         allDay: Boolean,
         recurrence: HashMap<String, Any>?,
         invites: String?
-    ): Boolean {
+    ) {
 
         val mContext: Context = if (activity != null) activity!!.applicationContext else context!!
         val intent = Intent(Intent.ACTION_INSERT)
-
 
         intent.data = CalendarContract.Events.CONTENT_URI
         intent.putExtra(CalendarContract.Events.TITLE, title)
@@ -117,10 +121,27 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         if (intent.resolveActivity(mContext.packageManager) != null) {
-            mContext.startActivity(intent)
+            activity!!.startActivityForResult(intent, 0)
+        } else {
+            flutterResult!!.error("NoCalendarApp", "No app found on the device that can handle the calendar intent.", null)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (requestCode == 0) {
+            if (resultCode == Activity.RESULT_OK) {
+                flutterResult?.success("success")
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                flutterResult?.success("canceled")
+            } else {
+                val permission = ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_CALENDAR)
+                if (permission == PackageManager.PERMISSION_DENIED) {
+                    flutterResult?.success("permissionDenied")
+                }
+            }
             return true
         }
-        return false;
+        return false
     }
 
 
