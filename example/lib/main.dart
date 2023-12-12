@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 
 import 'package:add_2_calendar/add_2_calendar.dart';
@@ -43,10 +45,11 @@ class MyApp extends StatelessWidget {
             ListTile(
               title: const Text('Add normal event'),
               trailing: const Icon(Icons.calendar_today),
-              onTap: () {
-                Add2Calendar.addEvent2Cal(
+              onTap: () async {
+                final result = await Add2Calendar.addEvent2Cal(
                   buildEvent(),
                 );
+                print(result);
               },
             ),
             const Divider(),
@@ -54,13 +57,14 @@ class MyApp extends StatelessWidget {
               title: const Text('Add event with recurrence 1'),
               subtitle: const Text("weekly for 3 months"),
               trailing: const Icon(Icons.calendar_today),
-              onTap: () {
-                Add2Calendar.addEvent2Cal(buildEvent(
+              onTap: () async {
+                final result = await Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
                     frequency: Frequency.weekly,
                     endDate: DateTime.now().add(const Duration(days: 60)),
                   ),
                 ));
+                print(result);
               },
             ),
             const Divider(),
@@ -68,14 +72,15 @@ class MyApp extends StatelessWidget {
               title: const Text('Add event with recurrence 2'),
               subtitle: const Text("every 2 months for 6 times (1 year)"),
               trailing: const Icon(Icons.calendar_today),
-              onTap: () {
-                Add2Calendar.addEvent2Cal(buildEvent(
+              onTap: () async {
+                final result = await Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
                     frequency: Frequency.monthly,
                     interval: 2,
                     ocurrences: 6,
                   ),
                 ));
+                print(result);
               },
             ),
             const Divider(),
@@ -84,13 +89,14 @@ class MyApp extends StatelessWidget {
               subtitle:
                   const Text("RRULE (android only) every year for 10 years"),
               trailing: const Icon(Icons.calendar_today),
-              onTap: () {
-                Add2Calendar.addEvent2Cal(buildEvent(
+              onTap: () async {
+                final result = await Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
                     frequency: Frequency.yearly,
                     rRule: 'FREQ=YEARLY;COUNT=10;WKST=SU',
                   ),
                 ));
+                print(result);
               },
             ),
             const Divider(),
