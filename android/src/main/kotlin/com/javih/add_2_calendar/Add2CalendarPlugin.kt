@@ -29,11 +29,11 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   private var context: Context? = null
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    context = flutterPluginBinding.applicationContext
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "add_2_calendar")
-    channel.setMethodCallHandler(this)
+      context = flutterPluginBinding.applicationContext
+      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "add_2_calendar")
+      channel.setMethodCallHandler(this)
   }
- 
+
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
       if (call.method == "add2Cal") {
           val success = insert(
@@ -54,11 +54,11 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       }
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
 
- override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
     }
 
@@ -151,8 +151,24 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
                 val formatter: DateFormat = SimpleDateFormat("yyyyMMdd'T'HHmmss")
                 rRule += "UNTIL=" + formatter.format(endDate).toString() + ";"
             }
+            val days = recurrence["days"] as List<String>?
+            if (days != null && days.size > 0) {
+                val transform: (String) -> String = {
+                    when (it) {
+                        "monday" -> "MO"
+                        "tuesday" -> "TU"
+                        "wednesday" -> "WE"
+                        "thursday" -> "TH"
+                        "friday" -> "FR"
+                        "saturday" -> "SA"
+                        else -> "SU"
+                    }
+                }
+
+                val result = days.map( transform )
+                rRule += "BYDAY=" + result.joinToString(separator = ",")
+            }
         }
         return rRule
     }
-
 }
