@@ -105,7 +105,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         } else {
             let authStatus = getAuthorizationStatus()
             switch authStatus {
-            case .authorized:
+            case .authorized, .fullAccess, .writeOnly:
                 OperationQueue.main.addOperation {
                     self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                 }
