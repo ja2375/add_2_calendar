@@ -1,3 +1,5 @@
+# 3.0.2
+* Changed AGP 8.1, Java 17
 # 3.0.1
 * Fixes duplicated compile options on Android
 # 3.0.0
