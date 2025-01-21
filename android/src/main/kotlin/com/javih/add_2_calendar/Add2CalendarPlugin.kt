@@ -152,7 +152,7 @@ class Add2CalendarPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
                 rRule += "UNTIL=" + formatter.format(endDate).toString() + ";"
             }
         }
-        return rRule
+        return rRule.replace("RRULE:", "")
     }
 
 }

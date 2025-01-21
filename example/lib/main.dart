@@ -81,14 +81,13 @@ class MyApp extends StatelessWidget {
             const Divider(),
             ListTile(
               title: const Text('Add event with recurrence 3'),
-              subtitle:
-                  const Text("RRULE (android only) every year for 10 years"),
+              subtitle: const Text("RRULE every month 4 mo, 4 we, 10 times"),
               trailing: const Icon(Icons.calendar_today),
               onTap: () {
                 Add2Calendar.addEvent2Cal(buildEvent(
                   recurrence: Recurrence(
                     frequency: Frequency.yearly,
-                    rRule: 'FREQ=YEARLY;COUNT=10;WKST=SU',
+                    rRule: 'FREQ=MONTHLY;COUNT=10;BYDAY=4MO,4WE',
                   ),
                 ));
               },

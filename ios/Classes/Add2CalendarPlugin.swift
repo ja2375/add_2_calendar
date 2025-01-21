@@ -75,17 +75,25 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         event.isAllDay = allDay
         
         if let recurrence = args["recurrence"] as? [String:Any]{
-            let interval = recurrence["interval"] as! Int
-            let frequency = recurrence["frequency"] as! Int
-            let end = recurrence["endDate"] as? Double// Date(milliseconds: (args["startDate"] as! Double))
-            let ocurrences = recurrence["ocurrences"] as? Int
+            if let rRule =  recurrence["rRule"] as? String {
+                if let rule = EKRecurrenceRule.init(rfc5445String: rRule) {
+                    event.recurrenceRules = [rule];
+                }
+            } else {
+                let interval = recurrence["interval"] as! Int
+                let frequency = recurrence["frequency"] as! Int
+                let end = recurrence["endDate"] as? Double// Date(milliseconds: (args["startDate"] as! Double))
+                let ocurrences = recurrence["ocurrences"] as? Int
+                
+                
+                let recurrenceRule = EKRecurrenceRule.init(
+                    recurrenceWith: EKRecurrenceFrequency(rawValue: frequency)!,
+                    interval: interval,
+                    end: ocurrences != nil ? EKRecurrenceEnd.init(occurrenceCount: ocurrences!) : end != nil ? EKRecurrenceEnd.init(end: Date(milliseconds: end!)) : nil
+                )
+                event.recurrenceRules = [recurrenceRule]
+            }
             
-            let recurrenceRule = EKRecurrenceRule.init(
-                recurrenceWith: EKRecurrenceFrequency(rawValue: frequency)!,
-                interval: interval,
-                end: ocurrences != nil ? EKRecurrenceEnd.init(occurrenceCount: ocurrences!) : end != nil ? EKRecurrenceEnd.init(end: Date(milliseconds: end!)) : nil
-            )
-            event.recurrenceRules = [recurrenceRule]
         }
         
         return event
