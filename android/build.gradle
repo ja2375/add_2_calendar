@@ -29,7 +29,7 @@ android {
         namespace 'com.javih.add_2_calendar'
     }
 
-    compileSdkVersion 33
+    compileSdkVersion 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

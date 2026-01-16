@@ -19,16 +19,22 @@ class Recurrence {
   /// Specifies how often the recurrence rule repeats over the unit of time indicated by its frequency.
   final int interval;
 
-  /// (Android only) If you have a specific rule that cannot be matched with current parameters, you can specify a RRULE in RFC5545 format
+  /// If you have a specific rule that cannot be matched with current parameters, you can specify a RRULE in RFC5545 format
   final String? rRule;
   Recurrence({
-    required this.frequency,
+    this.frequency,
     this.ocurrences,
     this.endDate,
     this.interval = 1,
     this.rRule,
-  }) : assert(ocurrences == null || endDate == null,
-            "Specify either ocurrences or endDate");
+  })  : assert(
+          frequency != null || rRule != null,
+          'One of frequency or rRule should specified',
+        ),
+        assert(
+          frequency == null || (ocurrences == null || endDate == null),
+          'Specify either ocurrences or endDate',
+        );
 
   Map<String, dynamic> toJson() => {
         'frequency': frequency?.index,
