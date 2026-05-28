@@ -1,3 +1,5 @@
+# 3.1.0
+* Support for Swift Package Manager
 # 3.0.1
 * Fixes duplicated compile options on Android
 # 3.0.0
