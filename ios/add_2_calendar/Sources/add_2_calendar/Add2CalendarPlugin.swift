@@ -103,6 +103,14 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     // Show event kit ui to add event to calendar
     
     func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
+        // Reject re-entry while a modal is already in flight. The
+        // singleton-shared pendingResult slot would otherwise orphan the
+        // first Future and resolve the second with the first modal's
+        // action.
+        guard self.pendingResult == nil else {
+            completion?(false)
+            return
+        }
         self.pendingResult = completion
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
@@ -126,13 +134,16 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                     } else {
                         // Auth denied
                         completion?(false)
+                        self?.pendingResult = nil
                     }
                 })
             case .denied, .restricted:
                 // Auth denied or restricted
                 completion?(false)
+                self.pendingResult = nil
             default:
                 completion?(false)
+                self.pendingResult = nil
             }
         }
     }
@@ -154,6 +165,11 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 statusBarStyle = UIApplication.shared.statusBarStyle
                 UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
             })
+        } else {
+            // No window/root available — fail-closed so the Future
+            // doesn't hang. Same observable as #135, different cause.
+            self.pendingResult?(false)
+            self.pendingResult = nil
         }
     }
 }
@@ -161,11 +177,15 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
 extension Add2CalendarPlugin: EKEventEditViewDelegate {
     
     public func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        // Resolve the Future only after the modal is fully off-screen.
+        // Firing pendingResult while dismiss is still animating lets a
+        // caller's .then() / await-next re-enter add2Cal mid-dismissal,
+        // which UIKit silently drops.
+        let saved = (action == .saved)
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
+            self.pendingResult?(saved)
+            self.pendingResult = nil
         })
-        let saved = (action == .saved)
-        self.pendingResult?(saved)
-        self.pendingResult = nil
     }
 }
