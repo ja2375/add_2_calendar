@@ -12,6 +12,11 @@ extension Date {
 
 var statusBarStyle = UIApplication.shared.statusBarStyle
 public class Add2CalendarPlugin: NSObject, FlutterPlugin {
+  // Captured by `presentCalendarModalToAddEvent` and invoked by
+  // EKEventEditViewDelegate so the Flutter Future<bool> resolves with
+  // .saved → true, .canceled|.deleted → false. Closes #135.
+  private var pendingResult: ((Bool) -> Void)?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "add_2_calendar", binaryMessenger: registrar.messenger())
     let instance = Add2CalendarPlugin()
@@ -98,6 +103,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     // Show event kit ui to add event to calendar
     
     func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
+        self.pendingResult = completion
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
                 self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
@@ -109,7 +115,6 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 OperationQueue.main.addOperation {
                     self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                 }
-                completion?(true)
             case .notDetermined:
                 //Auth is not determined
                 //We should request access to the calendar
@@ -118,7 +123,6 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                         OperationQueue.main.addOperation {
                             self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                         }
-                        completion?(true)
                     } else {
                         // Auth denied
                         completion?(false)
@@ -160,5 +164,8 @@ extension Add2CalendarPlugin: EKEventEditViewDelegate {
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
         })
+        let saved = (action == .saved)
+        self.pendingResult?(saved)
+        self.pendingResult = nil
     }
 }
