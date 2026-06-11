@@ -12,28 +12,28 @@ extension Date {
 
 var statusBarStyle = UIApplication.shared.statusBarStyle
 public class Add2CalendarPlugin: NSObject, FlutterPlugin {
+  private var pendingResult: FlutterResult?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "add_2_calendar", binaryMessenger: registrar.messenger())
     let instance = Add2CalendarPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
+  private func completePendingResult(_ success: Bool) {
+    pendingResult?(success)
+    pendingResult = nil
+  }
+
  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       if call.method == "add2Cal" {
         let args = call.arguments as! [String:Any]
-       
-          
-        addEventToCalendar(from: args,completion:{ (success) -> Void in
-              if success {
-                  result(true)
-              } else {
-                  result(false)
-              }
-          })
+        pendingResult = result
+        addEventToCalendar(from: args)
       }
     }
 
-    private func addEventToCalendar(from args: [String:Any], completion: ((_ success: Bool) -> Void)? = nil) {
+    private func addEventToCalendar(from args: [String:Any]) {
         
         
         let title = args["title"] as! String
@@ -49,7 +49,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         let eventStore = EKEventStore()
         let event = createEvent(eventStore: eventStore, alarmInterval: alarmInterval, title: title, description: description, location: location, timeZone: timeZone, startDate: startDate, endDate: endDate, allDay: allDay, url: url, args: args)
 
-        presentCalendarModalToAddEvent(event, eventStore: eventStore, completion: completion)
+        presentCalendarModalToAddEvent(event, eventStore: eventStore)
     }
     
     private func createEvent(eventStore: EKEventStore, alarmInterval: Double?, title: String, description: String?, location: String?, timeZone: TimeZone?, startDate: Date?, endDate: Date?, allDay: Bool, url: String?, args: [String:Any]) -> EKEvent {
@@ -97,7 +97,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     
     // Show event kit ui to add event to calendar
     
-    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
+    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore) {
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
                 self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
@@ -109,7 +109,6 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 OperationQueue.main.addOperation {
                     self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                 }
-                completion?(true)
             case .notDetermined:
                 //Auth is not determined
                 //We should request access to the calendar
@@ -118,17 +117,16 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                         OperationQueue.main.addOperation {
                             self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                         }
-                        completion?(true)
                     } else {
                         // Auth denied
-                        completion?(false)
+                        self?.completePendingResult(false)
                     }
                 })
             case .denied, .restricted:
                 // Auth denied or restricted
-                completion?(false)
+                completePendingResult(false)
             default:
-                completion?(false)
+                completePendingResult(false)
             }
         }
     }
@@ -150,6 +148,8 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 statusBarStyle = UIApplication.shared.statusBarStyle
                 UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
             })
+        } else {
+            completePendingResult(false)
         }
     }
 }
@@ -157,6 +157,14 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
 extension Add2CalendarPlugin: EKEventEditViewDelegate {
     
     public func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        switch action {
+        case .saved:
+            completePendingResult(true)
+        case .canceled, .deleted:
+            completePendingResult(false)
+        @unknown default:
+            completePendingResult(false)
+        }
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
         })
