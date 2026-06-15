@@ -15,7 +15,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
   // Captured by `presentCalendarModalToAddEvent` and invoked by
   // EKEventEditViewDelegate so the Flutter Future<bool> resolves with
   // .saved → true, .canceled|.deleted → false. Closes #135.
-  private var pendingResult: ((Bool) -> Void)?
+  private var pendingResult: FlutterResult?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "add_2_calendar", binaryMessenger: registrar.messenger())
@@ -23,22 +23,28 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
+  private func completePendingResult(_ success: Bool) {
+    pendingResult?(success)
+    pendingResult = nil
+  }
+
  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
       if call.method == "add2Cal" {
+        // Reject re-entry while a modal is already in flight. The
+        // singleton-shared pendingResult slot would otherwise orphan the
+        // first Future and resolve the second with the first modal's
+        // action. Reject the new call without disturbing the in-flight one.
+        guard pendingResult == nil else {
+          result(false)
+          return
+        }
         let args = call.arguments as! [String:Any]
-       
-          
-        addEventToCalendar(from: args,completion:{ (success) -> Void in
-              if success {
-                  result(true)
-              } else {
-                  result(false)
-              }
-          })
+        pendingResult = result
+        addEventToCalendar(from: args)
       }
     }
 
-    private func addEventToCalendar(from args: [String:Any], completion: ((_ success: Bool) -> Void)? = nil) {
+    private func addEventToCalendar(from args: [String:Any]) {
         
         
         let title = args["title"] as! String
@@ -54,7 +60,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         let eventStore = EKEventStore()
         let event = createEvent(eventStore: eventStore, alarmInterval: alarmInterval, title: title, description: description, location: location, timeZone: timeZone, startDate: startDate, endDate: endDate, allDay: allDay, url: url, args: args)
 
-        presentCalendarModalToAddEvent(event, eventStore: eventStore, completion: completion)
+        presentCalendarModalToAddEvent(event, eventStore: eventStore)
     }
     
     private func createEvent(eventStore: EKEventStore, alarmInterval: Double?, title: String, description: String?, location: String?, timeZone: TimeZone?, startDate: Date?, endDate: Date?, allDay: Bool, url: String?, args: [String:Any]) -> EKEvent {
@@ -102,16 +108,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     
     // Show event kit ui to add event to calendar
     
-    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
-        // Reject re-entry while a modal is already in flight. The
-        // singleton-shared pendingResult slot would otherwise orphan the
-        // first Future and resolve the second with the first modal's
-        // action.
-        guard self.pendingResult == nil else {
-            completion?(false)
-            return
-        }
-        self.pendingResult = completion
+    func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore) {
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
                 self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
@@ -133,17 +130,14 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                         }
                     } else {
                         // Auth denied
-                        completion?(false)
-                        self?.pendingResult = nil
+                        self?.completePendingResult(false)
                     }
                 })
             case .denied, .restricted:
                 // Auth denied or restricted
-                completion?(false)
-                self.pendingResult = nil
+                completePendingResult(false)
             default:
-                completion?(false)
-                self.pendingResult = nil
+                completePendingResult(false)
             }
         }
     }
@@ -168,8 +162,7 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
         } else {
             // No window/root available — fail-closed so the Future
             // doesn't hang. Same observable as #135, different cause.
-            self.pendingResult?(false)
-            self.pendingResult = nil
+            completePendingResult(false)
         }
     }
 }
@@ -184,8 +177,7 @@ extension Add2CalendarPlugin: EKEventEditViewDelegate {
         let saved = (action == .saved)
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
-            self.pendingResult?(saved)
-            self.pendingResult = nil
+            self.completePendingResult(saved)
         })
     }
 }

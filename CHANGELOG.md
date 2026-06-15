@@ -1,3 +1,6 @@
+# 3.1.1
+* Fix iOS 17+ `addEvent2Cal` Future never completing; result is now returned when the user saves or cancels the event editor
+
 # 3.1.0
 * Support for Swift Package Manager
 # 3.0.1
