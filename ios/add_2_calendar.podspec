@@ -14,6 +14,7 @@ A new Flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'add_2_calendar/Sources/add_2_calendar/**/*.swift'
+  s.resource_bundles = {'add_2_calendar_privacy' => ['add_2_calendar/Sources/add_2_calendar/PrivacyInfo.xcprivacy']}
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
 
