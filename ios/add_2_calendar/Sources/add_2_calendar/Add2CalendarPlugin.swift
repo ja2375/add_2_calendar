@@ -12,6 +12,11 @@ extension Date {
 
 var statusBarStyle = UIApplication.shared.statusBarStyle
 public class Add2CalendarPlugin: NSObject, FlutterPlugin {
+  // Captured by `presentCalendarModalToAddEvent` and invoked by
+  // EKEventEditViewDelegate so the Flutter Future<bool> resolves with
+  // .saved → true, .canceled|.deleted → false. Closes #135.
+  private var pendingResult: ((Bool) -> Void)?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "add_2_calendar", binaryMessenger: registrar.messenger())
     let instance = Add2CalendarPlugin()
@@ -98,6 +103,15 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
     // Show event kit ui to add event to calendar
     
     func presentCalendarModalToAddEvent(_ event: EKEvent, eventStore: EKEventStore, completion: ((_ success: Bool) -> Void)? = nil) {
+        // Reject re-entry while a modal is already in flight. The
+        // singleton-shared pendingResult slot would otherwise orphan the
+        // first Future and resolve the second with the first modal's
+        // action.
+        guard self.pendingResult == nil else {
+            completion?(false)
+            return
+        }
+        self.pendingResult = completion
         if #available(iOS 17, *) {
             OperationQueue.main.addOperation {
                 self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
@@ -109,7 +123,6 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 OperationQueue.main.addOperation {
                     self.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                 }
-                completion?(true)
             case .notDetermined:
                 //Auth is not determined
                 //We should request access to the calendar
@@ -118,17 +131,19 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                         OperationQueue.main.addOperation {
                             self?.presentEventCalendarDetailModal(event: event, eventStore: eventStore)
                         }
-                        completion?(true)
                     } else {
                         // Auth denied
                         completion?(false)
+                        self?.pendingResult = nil
                     }
                 })
             case .denied, .restricted:
                 // Auth denied or restricted
                 completion?(false)
+                self.pendingResult = nil
             default:
                 completion?(false)
+                self.pendingResult = nil
             }
         }
     }
@@ -150,6 +165,11 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
                 statusBarStyle = UIApplication.shared.statusBarStyle
                 UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
             })
+        } else {
+            // No window/root available — fail-closed so the Future
+            // doesn't hang. Same observable as #135, different cause.
+            self.pendingResult?(false)
+            self.pendingResult = nil
         }
     }
 }
@@ -157,8 +177,15 @@ public class Add2CalendarPlugin: NSObject, FlutterPlugin {
 extension Add2CalendarPlugin: EKEventEditViewDelegate {
     
     public func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        // Resolve the Future only after the modal is fully off-screen.
+        // Firing pendingResult while dismiss is still animating lets a
+        // caller's .then() / await-next re-enter add2Cal mid-dismissal,
+        // which UIKit silently drops.
+        let saved = (action == .saved)
         controller.dismiss(animated: true, completion: {
             UIApplication.shared.statusBarStyle = statusBarStyle
+            self.pendingResult?(saved)
+            self.pendingResult = nil
         })
     }
 }
