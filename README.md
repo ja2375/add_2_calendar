@@ -1,10 +1,14 @@
+> [!NOTE]
+> **This repository is archived.** It is read-only and unmaintained.
+> Contact [@Augmentador](https://github.com/Augmentador) for information about its contents.
+
 # add_2_calendar
 
 A really simple Flutter plugin to add events to each platform's default calendar.
 
 ## Installation
 
-In your `pubspec.yaml` file within your Flutter Project: 
+In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
@@ -37,7 +41,7 @@ In order to make this plugin work on iOS 10+, be sure to add this to your `info.
 <string>INSERT_REASON_HERE</string>
 ```
 
-`NSContactsUsageDescription` is required for the location autocomplete once Apple's UI is opened, so 
+`NSContactsUsageDescription` is required for the location autocomplete once Apple's UI is opened, so
 it is highly recommended that you also add the key, the app might crash otherwise.
 
 ```xml
@@ -56,11 +60,11 @@ final Event event = Event(
       location: 'Event location',
       startDate: DateTime(/* Some date here */),
       endDate: DateTime(/* Some date here */),
-      iosParams: IOSParams( 
+      iosParams: IOSParams(
         reminder: Duration(/* Ex. hours:1 */), // on iOS, you can set alarm notification after your event.
         url: 'https://www.example.com', // on iOS, you can set url to your event.
       ),
-      androidParams: AndroidParams( 
+      androidParams: AndroidParams(
         emailInvites: [], // on Android, you can add invite emails to your event.
       ),
     );
@@ -104,4 +108,3 @@ Note: See [DateTime docs](https://api.flutter.dev/flutter/dart-core/DateTime-cla
 ## Example
 
 Please run the app in the `example/` folder to start playing!
-
